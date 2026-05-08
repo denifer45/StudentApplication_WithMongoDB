@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -10,9 +9,11 @@ app.use(cors());
 app.use(express.json());
 
 mongoose.connect("mongodb://127.0.0.1:27017/studentApp")
- .then(() => console.log("MongoDB Connected ✅"))
+  .then(() => console.log("MongoDB Connected ✅"))
   .catch((err) => console.log(err));
 
+// ✅ ROUTES
 app.use("/api/students", require("./routes/studentRoutes"));
+app.use("/api/auth", require("./routes/authRoutes")); // 🔥 ADD THIS
 
-app.listen(4071, () => console.log("Server running"));
+app.listen(4071, () => console.log("Server running on 4071 🚀"));

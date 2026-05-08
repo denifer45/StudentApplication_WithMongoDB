@@ -3,22 +3,32 @@ const generateOTP = require("../utils/generateOTP");
 const jwt = require("jsonwebtoken");
 
 exports.sendOTP = async (req, res) => {
- const { phone } = req.body;
+  try {
+    const { phone, name } = req.body;
 
- const otp = generateOTP();
+    if (!phone || !name) {
+      return res.status(400).json({ message: "Name and phone are required" });
+    }
 
- const user = await User.findOneAndUpdate(
-  { phone },
-  {
-   otp,
-   otpExpires: Date.now() + 5 * 60 * 1000
-  },
-  { upsert: true, new: true }
- );
+    const otp = generateOTP();
 
- console.log("OTP:", otp);
+    const user = await User.findOneAndUpdate(
+      { phone },
+      {
+        name,
+        otp,
+        otpExpires: Date.now() + 5 * 60 * 1000,
+      },
+      { upsert: true, new: true }
+    );
 
- res.json({ message: "OTP sent" });
+    console.log("OTP:", otp);
+
+    res.json({ message: "OTP sent" });
+  } catch (err) {
+    console.error("SEND OTP ERROR 👉", err);
+    res.status(500).json({ message: err.message });
+  }
 };
 
 exports.verifyOTP = async (req, res) => {
